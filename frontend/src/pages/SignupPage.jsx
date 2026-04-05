@@ -42,56 +42,70 @@ function SignupPage({ setCurrentPage }) {
   };
 
   return (
-    <div className="form-card">
-      <h2>Create Account</h2>
+    <div className="auth-split-wrapper">
+      <div className="auth-left-panel">
+        <div className="auth-form-box">
+          <h2 className="auth-title">Create Account</h2>
+          <p className="auth-subtitle">
+            Join now and start managing your expenses with ease.
+          </p>
 
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label>Name</label>
-          <input
-            type="text"
-            name="name"
-            placeholder="Enter your name"
-            value={formData.name}
-            onChange={handleChange}
-          />
+          <form onSubmit={handleSubmit}>
+            <div className="form-group">
+              <label>Name</label>
+              <input
+                type="text"
+                name="name"
+                placeholder="Enter your name"
+                value={formData.name}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Email</label>
+              <input
+                type="email"
+                name="email"
+                placeholder="Enter your email"
+                value={formData.email}
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Password</label>
+              <input
+                type="password"
+                name="password"
+                placeholder="Enter your password"
+                value={formData.password}
+                onChange={handleChange}
+              />
+            </div>
+
+            <button className="auth-main-btn" type="submit">
+              Sign Up
+            </button>
+          </form>
+
+          {message && <p className="message-text">{message}</p>}
         </div>
+      </div>
 
-        <div className="form-group">
-          <label>Email</label>
-          <input
-            type="email"
-            name="email"
-            placeholder="Enter your email"
-            value={formData.email}
-            onChange={handleChange}
-          />
+      <div className="auth-right-panel">
+        <div className="auth-right-content">
+          <h2>Hello Again</h2>
+          <p>Already have an account?</p>
+          <button
+            className="auth-outline-btn"
+            type="button"
+            onClick={() => setCurrentPage("login")}
+          >
+            Sign In
+          </button>
         </div>
-
-        <div className="form-group">
-          <label>Password</label>
-          <input
-            type="password"
-            name="password"
-            placeholder="Enter your password"
-            value={formData.password}
-            onChange={handleChange}
-          />
-        </div>
-
-        <button className="primary-btn" type="submit">
-          Sign Up
-        </button>
-      </form>
-
-      {message && <p className="message-text">{message}</p>}
-
-      <p className="switch-text">
-        Already have an account?{" "}
-        <button className="link-btn" onClick={() => setCurrentPage("login")}>
-          Login
-        </button>
-      </p>
+      </div>
     </div>
   );
 }
