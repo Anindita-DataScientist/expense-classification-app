@@ -1,18 +1,24 @@
 import { useState } from "react";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 function UploadPage() {
   const [file, setFile] = useState(null);
-  const [result, setResult] = useState(null);
+  const [message, setMessage] = useState("");
+  const [preview, setPreview] = useState([]);
+  const [columns, setColumns] = useState([]);
 
   const handleFileChange = (event) => {
-    setFile(event.target.files[0]);
+    const selectedFile = event.target.files[0];
+    setFile(selectedFile);
+    setMessage("");
+    setPreview([]);
+    setColumns([]);
   };
 
-  const handleUpload = async (event) => {
-    event.preventDefault();
-
+  const handleUpload = async () => {
     if (!file) {
-      alert("Please select a CSV file");
+      alert("Please select a CSV file first.");
       return;
     }
 
@@ -20,21 +26,28 @@ function UploadPage() {
     formData.append("file", file);
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/login`, {
+      const response = await fetch(`${API_URL}/upload/csv`, {
         method: "POST",
         body: formData,
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.detail || "Server returned an error");
+        const errorMessage =
+          data?.detail || data?.message || JSON.stringify(data);
+        setMessage(`Upload failed: ${errorMessage}`);
+        alert(`Upload failed: ${errorMessage}`);
+        return;
       }
 
-      const data = await response.json();
-      setResult(data);
+      setMessage(data.message || "Upload successful");
+      setPreview(data.preview || []);
+      setColumns(data.columns || []);
     } catch (error) {
-      console.error("Upload error:", error);
+      setMessage(`Upload failed: ${error.message}`);
       alert(`Upload failed: ${error.message}`);
+      console.error("Upload error:", error);
     }
   };
 
@@ -42,53 +55,29 @@ function UploadPage() {
     <div className="upload-box">
       <h2>Upload CSV</h2>
 
-      <form onSubmit={handleUpload}>
-        <div className="file-input">
-          <input type="file" accept=".csv" onChange={handleFileChange} />
-        </div>
+      <input type="file" accept=".csv" onChange={handleFileChange} />
+      <button className="primary-btn" onClick={handleUpload}>
+        Upload CSV
+      </button>
 
-        <button className="primary-btn" type="submit">
-          Upload CSV
-        </button>
-      </form>
+      {message && <p className="message-text">{message}</p>}
 
-      {result && (
+      {preview.length > 0 && (
         <div className="result-box">
-          <h3>Upload Result</h3>
-          <p>
-            <strong>Filename:</strong> {result.filename}
-          </p>
-          <p>
-            <strong>Total Rows:</strong> {result.row_count}
-          </p>
-          <p>
-            <strong>Saved Rows:</strong> {result.saved_count}
-          </p>
-          <p>
-            <strong>Skipped Duplicates:</strong> {result.skipped_duplicates}
-          </p>
-
-          <h4>Columns</h4>
-          <ul>
-            {result.columns.map((col, index) => (
-              <li key={index}>{col}</li>
-            ))}
-          </ul>
-
-          <h4>Preview</h4>
+          <h3>Preview</h3>
           <table className="preview-table">
             <thead>
               <tr>
-                {result.columns.map((col, index) => (
-                  <th key={index}>{col}</th>
+                {columns.map((column, index) => (
+                  <th key={index}>{column}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
-              {result.preview.map((row, rowIndex) => (
+              {preview.map((row, rowIndex) => (
                 <tr key={rowIndex}>
-                  {result.columns.map((col, colIndex) => (
-                    <td key={colIndex}>{String(row[col] ?? "")}</td>
+                  {columns.map((column, columnIndex) => (
+                    <td key={columnIndex}>{row[column]}</td>
                   ))}
                 </tr>
               ))}
