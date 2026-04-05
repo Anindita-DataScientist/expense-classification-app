@@ -77,10 +77,6 @@ function LoginPage({ setCurrentPage, onLoginSuccess }) {
 
           {message && <p className="message-text">{message}</p>}
 
-          <div className="auth-bottom-row">
-            <span className="remember-text">Secure Login</span>
-            <span className="forgot-text">Access your account</span>
-          </div>
         </div>
       </div>
 
