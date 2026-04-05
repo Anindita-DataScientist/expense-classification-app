@@ -7,14 +7,16 @@ from backend.app.routes.home import router as home_router
 from backend.app.routes.transaction_routes import router as transaction_router
 from backend.app.routes.upload_routes import router as upload_router
 
+from backend.app.database import Base, engine
+from backend.app.models import User, Transaction
+
 app = FastAPI()
+
+Base.metadata.create_all(bind=engine)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",
-        "https://your-frontend-domain.vercel.app",
-    ],
+    allow_origins=["*"],  # temporary for first deploy
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
