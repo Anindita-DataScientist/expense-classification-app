@@ -10,7 +10,7 @@ router = APIRouter(prefix="/upload", tags=["Upload"])
 
 @router.post("/csv")
 async def upload_csv(file: UploadFile = File(...), db: Session = Depends(get_db)):
-    if not file.filename.endswith(".csv"):
+    if not file.filename or not file.filename.lower().endswith(".csv"):
         raise HTTPException(status_code=400, detail="Only CSV files are allowed")
 
     contents = await file.read()
@@ -30,11 +30,11 @@ async def upload_csv(file: UploadFile = File(...), db: Session = Depends(get_db)
         skipped_count = 0
 
         for _, row in df.iterrows():
-            transaction_date = str(row.get("Date", ""))
-            description = str(row.get("Description", ""))
-            amount = str(row.get("Amount", ""))
-            transaction_type = str(row.get("Type", ""))
-            category_name = str(row.get("Category", "Other"))
+            transaction_date = str(row.get("Date", "")).strip()
+            description = str(row.get("Description", "")).strip()
+            amount = str(row.get("Amount", "")).strip()
+            transaction_type = str(row.get("Type", "")).strip()
+            category_name = str(row.get("Category", "Other")).strip() or "Other"
 
             existing_category = (
                 db.query(Category)
@@ -88,5 +88,6 @@ async def upload_csv(file: UploadFile = File(...), db: Session = Depends(get_db)
 
     except ValueError as error:
         raise HTTPException(status_code=400, detail=str(error))
-    except Exception:
-        raise HTTPException(status_code=500, detail="Failed to process CSV file")
+    except Exception as error:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=str(error))
