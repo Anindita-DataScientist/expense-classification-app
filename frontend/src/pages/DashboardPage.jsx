@@ -19,13 +19,15 @@ ChartJS.register(
   Legend
 );
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 function DashboardPage() {
   const [summary, setSummary] = useState(null);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
   const fetchDashboard = () => {
-    let url = "http://127.0.0.1:8000/dashboard/summary";
+    let url = `${API_URL}/dashboard/summary`;
 
     const params = new URLSearchParams();
     if (startDate) params.append("start_date", startDate);
@@ -46,7 +48,7 @@ function DashboardPage() {
   }, []);
 
   const handleExportCSV = () => {
-    window.open("http://127.0.0.1:8000/transactions/export/csv", "_blank");
+    window.open(`${API_URL}/transactions/export/csv`, "_blank");
   };
 
   if (!summary) {

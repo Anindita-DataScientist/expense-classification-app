@@ -4,7 +4,7 @@ function HomePage() {
   const [message, setMessage] = useState("Loading backend message...");
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/api/test")
+    fetch(`${import.meta.env.VITE_API_URL}/auth/login`)
       .then((response) => response.json())
       .then((data) => {
         setMessage(data.message);
