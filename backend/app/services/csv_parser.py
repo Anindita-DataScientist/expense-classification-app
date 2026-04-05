@@ -2,7 +2,7 @@ import io
 
 import pandas as pd
 
-from backend.app.services.categorizer import categorize_expense
+from app.services.categorizer import categorize_expense
 
 
 def parse_csv_file(file_bytes: bytes):

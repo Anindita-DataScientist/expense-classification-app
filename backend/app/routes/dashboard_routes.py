@@ -2,8 +2,8 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
-from backend.app.models import Transaction
-from backend.app.utils import get_db
+from app.models import Transaction
+from app.utils import get_db
 
 router = APIRouter(prefix="/dashboard", tags=["Dashboard"])
 
